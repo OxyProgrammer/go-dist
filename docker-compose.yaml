@@ -1,0 +1,32 @@
+services:
+  frontend:
+    container_name: frontend
+    build: ./front-end
+    environment:
+      - NODE_ENV=production
+    ports:
+      - 5000:3000
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  broker-service:
+    build:
+      context: ./broker-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # Map container's port 8080 to host's port 80
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  # mail-service:
+  #   build:
+  #     context: ./mail-service
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:8181"  # Map container's port 8181 to host's port 80
+  #   environment:
+  #     - ANOTHER_ENV=value
+
+  # Add more services as needed
