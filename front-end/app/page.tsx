@@ -11,11 +11,10 @@ export default function Home() {
   } else {
     baseApiUrl = 'http://localhost:8080';
   }
-  console.log(baseApiUrl);
 
-  const [sentText, setSentText] = useState('');
-  const [receivedText, setReceivedText] = useState('');
-  const [outputText, setOutputText] = useState('');
+  const [requestBody, setRequestBody] = useState<string>('');
+  const [responseBody, setResponseBody] = useState<string>('');
+  const [receivedMessage, setReceivedMessage] = useState<string>('');
 
   return (
     <div className='flex flex-col h-screen'>
@@ -41,34 +40,39 @@ export default function Home() {
       </header>
 
       {/* Body */}
-      <main className='flex-grow p-8'>
-        <ButtonPanel baseApiUrl={baseApiUrl} />
+      <main className='flex-grow p-8 w-1/2 mx-auto'>
+        <ButtonPanel
+          setRequestBody={setRequestBody}
+          setResponseBody={setResponseBody}
+          setResponseMessage={setReceivedMessage}
+          baseApiUrl={baseApiUrl}
+        />
         <textarea
-          className='w-full p-4 border border-gray-300 rounded-md resize-none'
+          className='w-full p-4 border border-gray-300 rounded-md resize-none text-2xl font-bold'
           placeholder='Response message shows here'
-          rows={4}
-          value={outputText}
-          onChange={(e) => setOutputText(e.target.value)}
+          rows={3}
+          readOnly={true}
+          value={receivedMessage}
         />
         <div className='flex space-x-4 mt-4'>
           <div className='w-1/2'>
             <h2 className='font-bold text-2xl'>Sent</h2>
             <textarea
-              className='w-full p-4 border border-gray-300 rounded-md resize-none'
-              rows={4}
+              className='w-full p-4 border border-gray-300 rounded-md resize-none text-xs'
+              rows={10}
               placeholder='Sent'
-              value={sentText}
-              onChange={(e) => setSentText(e.target.value)}
+              readOnly={true}
+              value={requestBody}
             />
           </div>
           <div className='w-1/2'>
             <h2 className='font-bold text-2xl'>Received</h2>
             <textarea
-              className='w-full p-4 border border-gray-300 rounded-md resize-none'
-              rows={4}
+              className='w-full p-4 border border-gray-300 rounded-md resize-none text-xs'
+              rows={10}
               placeholder='Received'
-              value={receivedText}
-              onChange={(e) => setReceivedText(e.target.value)}
+              readOnly={true}
+              value={responseBody}
             />
           </div>
         </div>
