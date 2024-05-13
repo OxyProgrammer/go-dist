@@ -4,8 +4,8 @@ import React from 'react';
 const buttonTexts: string[] = [
   'Test broker',
   'Test auth',
-  'Test email',
   'Test log',
+  'Test email',
   'Test gRPC log',
 ];
 
@@ -22,33 +22,31 @@ const ButtonPanel: React.FC<ButtonPanelProps> = ({
   setRequestBody,
   setResponseBody,
 }) => {
-
-
   async function sendRequest(buttonText: string) {
-    let request: RequestInit | undefined = undefined;
+    let request: RequestInit = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    };
     let apiUrl: string = `${baseApiUrl}`;
     try {
       switch (buttonText) {
         case 'Test broker':
-          request = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-          };
           break;
         case 'Test auth':
-          request = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'auth',
-              auth: { email: 'admin@example.com', password: 'verysecret' },
-            }),
-          };
+          request.body = JSON.stringify({
+            action: 'auth',
+            auth: { email: 'admin@example.com', password: 'verysecret' },
+          });
+          apiUrl = `${baseApiUrl}/handle`;
+          break;
+        case 'Test log':
+          request.body = JSON.stringify({
+            action: 'log',
+            log: { name: 'event', data: 'some event data.' },
+          });
           apiUrl = `${baseApiUrl}/handle`;
           break;
         case 'Test email':
-          break;
-        case 'Test log':
           break;
         case 'Test gRPC log':
           break;
