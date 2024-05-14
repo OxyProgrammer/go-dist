@@ -47,6 +47,16 @@ const ButtonPanel: React.FC<ButtonPanelProps> = ({
           apiUrl = `${baseApiUrl}/handle`;
           break;
         case 'Test email':
+          request.body = JSON.stringify({
+            action: 'mail',
+            mail: {
+              from: 'me@example.com',
+              to: 'you@there.com',
+              subject: 'Test email',
+              message: 'Hello world!',
+            },
+          });
+          apiUrl = `${baseApiUrl}/handle`;
           break;
         case 'Test gRPC log':
           break;

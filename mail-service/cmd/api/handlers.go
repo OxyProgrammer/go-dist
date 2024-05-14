@@ -1,6 +1,8 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func (app *Config) SendMail(w http.ResponseWriter, r *http.Request) {
 
@@ -25,5 +27,16 @@ func (app *Config) SendMail(w http.ResponseWriter, r *http.Request) {
 		Data:    requestPayload.Message,
 	}
 
-	// err := app.Mailer.SendSMTPMessage(msg)
+	err = app.Mailer.SendSMTPMessage(msg)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Message: "sent to " + requestPayload.To,
+	}
+
+	app.writeJSON(w, http.StatusAccepted, payload)
 }
