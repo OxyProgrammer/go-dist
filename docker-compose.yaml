@@ -56,11 +56,11 @@ services:
       MAIL_DOMAIN: localhost
       MAIL_HOST: mailhog
       MAIL_PORT: 1025
-      MAIL_USERNAME: none
+      MAIL_ENCRYPTION: none
+      MAIL_USERNAME: ""
       MAIL_PASSWORD: ""
-      MAIL_ENCRYPTION: ""
       FROM_NAME: "John Smith"
-      FROM_ADDRESS: "john.smith@example.com"
+      FROM_ADDRESS: john.smith@example.com
 
   postgres:
     image: 'postgres:14.2'
