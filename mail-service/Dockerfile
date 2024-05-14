@@ -24,6 +24,8 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
+# Copy templates folder and its contents from the build image to the final image
+COPY --from=builder /app/templates /root/templates
 
 EXPOSE 80
 # Command to run the executable
