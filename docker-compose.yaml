@@ -62,6 +62,14 @@ services:
       FROM_NAME: "John Smith"
       FROM_ADDRESS: john.smith@example.com
 
+  listener-service:
+    build:
+      context: ./listener-service
+      dockerfile: Dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
   postgres:
     image: 'postgres:14.2'
     ports:
@@ -93,18 +101,20 @@ services:
       - '1025:1025'
       - '8025:8025'
 
+  rabbitmq:
+    image: 'rabbitmq:3.9-alpine'
+    ports:
+      - "5672:5672"
+    deploy:
+      mode: replicated
+      replicas: 1
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 volumes:
   go-pgdata:
     driver: local
   mongodb_data_container:
     driver: local
-  # mail-service:
-  #   build:
-  #     context: ./mail-service
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "80:8181"  # Map container's port 8181 to host's port 80
-  #   environment:
-  #     - ANOTHER_ENV=value
-
-  # Add more services as needed
+  rabbitmq_data:
+    driver: local
