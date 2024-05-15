@@ -59,6 +59,11 @@ const ButtonPanel: React.FC<ButtonPanelProps> = ({
           apiUrl = `${baseApiUrl}/handle`;
           break;
         case 'Test gRPC log':
+          request.body = JSON.stringify({
+            action: 'log',
+            log: { name: 'event', data: 'grpc event data.' },
+          });
+          apiUrl = `${baseApiUrl}/log-grpc`;
           break;
         default:
           throw new Error('Unknown button text');
