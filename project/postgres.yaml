@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: 'postgres:14.2'
+    ports:
+    - '5432:5432'
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: users
+    volumes:
+    - go-pgdata:/var/lib/postgresql/data
+
+volumes:
+  go-pgdata:
+    driver: local
