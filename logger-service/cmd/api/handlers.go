@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log-service/data"
 	"net/http"
 )
@@ -19,7 +20,7 @@ func (app *Config) GetAllLogs(w http.ResponseWriter, r *http.Request) {
 	}
 	resp := jsonResponse{
 		Error:   false,
-		Message: "logged",
+		Message: fmt.Sprintf("Got a total of  %d log entries.", len(logs)),
 		Data:    logs,
 	}
 

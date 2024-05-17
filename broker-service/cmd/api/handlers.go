@@ -5,8 +5,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"net/rpc"
+	"time"
 )
 
 type RequestPayload struct {
@@ -54,7 +56,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.authenticate(w, requestPayload.Auth)
 	case "log":
-		app.logItemViaRPC(w, requestPayload.Log)
+		app.logEventViaRabbit(w, requestPayload.Log)
 	case "mail":
 		app.sendMail(w, requestPayload.Mail)
 	default:
@@ -89,41 +91,6 @@ func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
 	var payload jsonResponse
 	payload.Error = false
 	payload.Message = "Message sent to " + msg.To
-
-	app.writeJSON(w, http.StatusAccepted, payload)
-}
-
-func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
-	jsonData, _ := json.MarshalIndent(entry, "", "\t")
-
-	logServiceURL := "http://logger-service/log"
-
-	request, err := http.NewRequest("POST", logServiceURL, bytes.NewBuffer(jsonData))
-
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-
-	request.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-
-	response, err := client.Do(request)
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-	defer response.Body.Close()
-
-	if response.StatusCode != http.StatusAccepted {
-		app.errorJSON(w, errors.New("error calling logger service"))
-		return
-	}
-
-	var payload jsonResponse
-	payload.Error = false
-	payload.Message = "logged"
 
 	app.writeJSON(w, http.StatusAccepted, payload)
 }
@@ -213,6 +180,97 @@ func (app *Config) pushToQueue(name, msg string) error {
 type RPCPayload struct {
 	Name string
 	Data string
+}
+
+type LogEntry struct {
+	Id        string    `bson:"_id,omitempty" json:"id,omitempty"`
+	Name      string    `bson:"name" json:"name"`
+	Data      string    `bson:"data" json:"data"`
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
+}
+
+func (app *Config) GetAllLogsViaRPC(w http.ResponseWriter, r *http.Request) {
+	log.Println("GetAllLogsViaRPC Handler hit in broker service!")
+	client, err := rpc.Dial("tcp", "logger-service:5001")
+	if err != nil {
+		log.Println("[GetAllLogsViaRPC]: Error ocurred while dialing to logger service RPC: ", err)
+		app.errorJSON(w, err)
+		return
+	}
+	var logs []LogEntry
+	err = client.Call("RPCServer.GetAllLogsList", "dummy", &logs)
+	if err != nil {
+		log.Println("[GetAllLogsViaRPC]: Error ocurred on RPC call in broker service: ", err)
+		app.errorJSON(w, err)
+		return
+	}
+
+	payload := jsonResponse{
+		Error:   false,
+		Data:    logs,
+		Message: "Successfully got the logs list from log service using RPC.",
+	}
+
+	app.writeJSON(w, http.StatusAccepted, payload)
+}
+func (app *Config) DropLogCollectionViaRPC(w http.ResponseWriter, r *http.Request) {
+	log.Println("Requested dropping the collection of logs!")
+	client, err := rpc.Dial("tcp", "logger-service:5001")
+	if err != nil {
+		log.Println("[DropLogCollectionViaRPC]: Error ocurred while dialing to logger service RPC: ", err)
+		app.errorJSON(w, err)
+		return
+	}
+	var result string
+	err = client.Call("RPCServer.DeleteAllLogs", "dummy", &result)
+	if err != nil {
+		log.Println("[DropLogCollectionViaRPC]: Error ocurred on RPC call in broker service: ", err)
+		app.errorJSON(w, err)
+		return
+	}
+	payload := jsonResponse{
+		Error:   false,
+		Message: result,
+	}
+
+	app.writeJSON(w, http.StatusAccepted, payload)
+}
+
+// The folloiwng functions are for historical reasons. They wont be used.
+func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
+	jsonData, _ := json.MarshalIndent(entry, "", "\t")
+
+	logServiceURL := "http://logger-service/log"
+
+	request, err := http.NewRequest("POST", logServiceURL, bytes.NewBuffer(jsonData))
+
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+
+	response, err := client.Do(request)
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusAccepted {
+		app.errorJSON(w, errors.New("error calling logger service"))
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "logged"
+
+	app.writeJSON(w, http.StatusAccepted, payload)
 }
 
 func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {

@@ -18,7 +18,7 @@ const Home: React.FC = () => {
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [brokerDisplayText, setBrokerDisplayText] = useState<string>('');
   const [isAuthSuccess, setIsAuthSuccess] = useState<boolean>(true);
-  const [logsJson, setLogsJson] = useState<string>('TestBroker');
+  const [logsJson, setLogsJson] = useState<string>('');
 
   const resetAllStates = () => {
     //Clean up the request body
@@ -60,8 +60,12 @@ const Home: React.FC = () => {
           apiUrl = `${baseApiUrl}/handle`;
           break;
         case 'Refresh Logs':
-          apiUrl = `http://localhost:8082/get-all-logs`;
+          apiUrl = `${baseApiUrl}/get-all-logs`;
           request.method = 'GET';
+          break;
+        case 'Clean Logs':
+          apiUrl = `${baseApiUrl}/clean-all-logs`;
+          request.method = 'DELETE';
           break;
         default:
           throw new Error('Unknown button text');

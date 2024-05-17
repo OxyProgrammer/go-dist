@@ -24,10 +24,6 @@ const TestLog: React.FC<TestLogProps> = ({
     });
   };
 
-  const handleRefreshLogs = () => {
-    requestApiCall('Refresh Logs');
-  };
-
   return (
     <div className='flex h-full'>
       <div className='w-2/3 p-4 flex flex-col'>
@@ -53,19 +49,50 @@ const TestLog: React.FC<TestLogProps> = ({
         </div>
       </div>
       <div className='w-1/3 p-4 border-l flex flex-col'>
-        <div className='flex justify-start mb-4 w-full'>
+        <div className='flex justify-between mb-4 w-full'>
           <ApiButton
             buttonText='Refresh Logs'
             isBusy={isBusy}
-            onButtonClick={handleRefreshLogs}
+            onButtonClick={()=>requestApiCall('Refresh Logs')}
           />
+          <button className={`px-4 py-2 text-sm bg-red-500 text-white rounded flex items-center 
+                  ${
+                    isBusy
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-red-700'
+                  }`} onClick={()=>requestApiCall('Clean Logs')}>
+            {' '}
+            {isBusy && (
+              <svg
+                className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 24 24'
+              >
+                <circle
+                  className='opacity-25'
+                  cx='12'
+                  cy='12'
+                  r='10'
+                  stroke='currentColor'
+                  strokeWidth='4'
+                ></circle>
+                <path
+                  className='opacity-75'
+                  fill='currentColor'
+                  d='M4 12a8 8 0 018-8v8z'
+                ></path>
+              </svg>
+            )}
+            Clear all logs
+          </button>
         </div>
 
         {/* <pre className='bg-gray-100 p-4 rounded overflow-x-auto flex-grow'>
           {logsJson}
         </pre> */}
         <textarea
-          placeholder='Message'
+          placeholder='Logs JSON'
           className='p-2 border rounded h-48 flex-grow'
           value={logsJson}
           readOnly
