@@ -75,7 +75,7 @@ const Home: React.FC = () => {
 
       switch (reason) {
         case 'Test Broker':
-          setBrokerDisplayText('Broker sucessfully connection tested!');
+          setBrokerDisplayText('Broker sucessfully connection tested! 👍');
           break;
         case 'Test Auth':
           if(!data.error){
