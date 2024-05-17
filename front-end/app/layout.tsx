@@ -1,12 +1,10 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import type { Metadata } from 'next';
+import './globals.css';
+import { quicksand } from './fonts'
 
 export const metadata: Metadata = {
-  title: "Go Kube UI",
-  description: "UI for go microservices",
+  title: 'Go Dist UI',
+  description: 'UI for go microservices',
 };
 
 export default function RootLayout({
@@ -15,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang='en' className={quicksand.className}>
+      <body>{children}</body>
     </html>
   );
 }

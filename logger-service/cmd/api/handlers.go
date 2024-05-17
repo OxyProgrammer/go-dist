@@ -10,6 +10,22 @@ type JSONPayload struct {
 	Data string `json:"data"`
 }
 
+func (app *Config) GetAllLogs(w http.ResponseWriter, r *http.Request) {
+
+	logs, err := app.Models.LogEntry.All()
+	if err != nil {
+		app.errorJSON(w, err)
+		return
+	}
+	resp := jsonResponse{
+		Error:   false,
+		Message: "logged",
+		Data:    logs,
+	}
+
+	app.writeJSON(w, http.StatusAccepted, resp)
+}
+
 func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
 	// read json into var
 	var requestPayload JSONPayload
