@@ -155,7 +155,7 @@ func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LogPayload) {
 	}
 	var payload jsonResponse
 	payload.Error = false
-	payload.Message = "logged via rabbit mq"
+	payload.Message = "Logged via rabbit mq"
 	app.writeJSON(w, http.StatusAccepted, payload)
 }
 
