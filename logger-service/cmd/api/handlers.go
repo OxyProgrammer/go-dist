@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log-service/data"
 	"net/http"
 )
@@ -9,22 +8,6 @@ import (
 type JSONPayload struct {
 	Name string `json:"name"`
 	Data string `json:"data"`
-}
-
-func (app *Config) GetAllLogs(w http.ResponseWriter, r *http.Request) {
-
-	logs, err := app.Models.LogEntry.All()
-	if err != nil {
-		app.errorJSON(w, err)
-		return
-	}
-	resp := jsonResponse{
-		Error:   false,
-		Message: fmt.Sprintf("Got a total of  %d log entries.", len(logs)),
-		Data:    logs,
-	}
-
-	app.writeJSON(w, http.StatusAccepted, resp)
 }
 
 func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
