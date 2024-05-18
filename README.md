@@ -107,14 +107,14 @@ You will need docker desktop on your machine to be able to run this repo. You wi
 
 - Please note the PostgreSQL database needs to be seeded to be able to function properly. Connect to the postgresql container (
   - host: _**localhost**_ 
-  - port: _**5432**_,
+  - port: _**5432**_
   - username: _**postgres**_ 
   - password: _**password**_ 
   - db: _**users**_ 
 
   You may connect to the postresql using [PgAdmin](https://www.pgadmin.org/) or any Visual Studio Extension for Postgres. Once connected you will need to run the sql script from [here](https://github.com/OxyProgrammer/go-dist/blob/main/dbScript/users.sql). 
 
-- If everything works well, bring up the frontend by hitting [http://localhost:5000](http://localhost:5000).
+- If everything works well, you should be able to bring up the frontend by hitting [http://localhost:5000](http://localhost:5000).
 
 ## Contributing
 
